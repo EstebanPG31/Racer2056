@@ -24,6 +24,10 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _Glossiness: 0.597
+    - _GlossyReflections: 1
+    - _Metallic: 0.148
+    - _SpecularHighlights: 1
     m_Colors: []
   m_BuildTextureStacks: []
