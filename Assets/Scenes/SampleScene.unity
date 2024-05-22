@@ -1081,11 +1081,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ce63328d837273448b4c7c83c8358b6e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 69
+      value: 120.3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ce63328d837273448b4c7c83c8358b6e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 26.1
+      value: 0.43
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ce63328d837273448b4c7c83c8358b6e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1122,6 +1122,18 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ce63328d837273448b4c7c83c8358b6e, type: 3}
       propertyPath: m_Name
       value: Vehiculo (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: ce63328d837273448b4c7c83c8358b6e, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: ce63328d837273448b4c7c83c8358b6e, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 1c8125c5ec14b9d409ec85bb4b462645, type: 2}
+    - target: {fileID: 5866666021909216657, guid: ce63328d837273448b4c7c83c8358b6e, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5120,7 +5132,7 @@ WheelCollider:
   m_GameObject: {fileID: 1626893027}
   serializedVersion: 2
   m_Center: {x: 0, y: 0, z: 0}
-  m_Radius: 5.5
+  m_Radius: 4.8
   m_SuspensionSpring:
     spring: 5
     damper: 4
@@ -5992,7 +6004,7 @@ WheelCollider:
   m_GameObject: {fileID: 1777957259}
   serializedVersion: 2
   m_Center: {x: 0, y: 0, z: 0}
-  m_Radius: 5.5
+  m_Radius: 4.8
   m_SuspensionSpring:
     spring: 5
     damper: 4
