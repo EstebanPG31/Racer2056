@@ -75,8 +75,8 @@ public class CarController : MonoBehaviour
     void Movement()
     {
 
-        FLWheel.steerAngle = 30 * Input.GetAxis("Horizontal");
-        FRWheel.steerAngle = 30 * Input.GetAxis("Horizontal");
+        FLWheel.steerAngle = 15 * Input.GetAxis("Horizontal");
+        FRWheel.steerAngle = 15 * Input.GetAxis("Horizontal");
 
         if (((currentSpeed > 0 && Input.GetAxis("Vertical") < 0)) || (currentSpeed <0 && Input.GetAxis("Vertical") > 0)){
             isBreaking = true;
