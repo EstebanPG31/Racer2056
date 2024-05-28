@@ -14,20 +14,25 @@ public class CarController : MonoBehaviour
     [SerializeField] Transform FR;
     [SerializeField] Transform RL;
     [SerializeField] Transform RR;
+    [SerializeField] ParticleSystem lSmoke;
+    [SerializeField] ParticleSystem rSmoke;
     [SerializeField] AudioSource Engine;
+    [SerializeField] AudioSource Brake;
+    //[SerializeField] AudioClip BrakeSound;
+    [SerializeField] Rigidbody rb;
 
     [Header("Values")]
-    [SerializeField] private float MaxTorque = 260000;
-    [SerializeField] private float MaxSpeed = 3300;
+    [SerializeField] private float MaxTorque = 220000;
+    [SerializeField] private float MaxSpeed = 2400;
     [SerializeField] private float maxBackwardsSpeed = 300;
-    [SerializeField] private float normalBrakeTorque = 150000;
-    //[SerializeField] private float slideBrakeTorque = 1300000;
-    [SerializeField] private float minPitch =0.32f;
-    [SerializeField] private float maxPitch = 1.4f;
+    [SerializeField] private float normalBrakeTorque = 130000;
+    [SerializeField] private float slideBrakeTorque = 15000;
+    [SerializeField] private float minPitch =0.4f;
+    [SerializeField] private float maxPitch = 1.1f;
     [SerializeField] private float mainForwardFriction = 15.0f;
     [SerializeField] private float mainSidewaysFriction = 15.0f;
-    [SerializeField] private float driftForwardFriction = 15.60f;
-    [SerializeField] private float driftSidewaysFriction = 15.15f;
+    [SerializeField] private float driftForwardFriction = 0.60f;
+    [SerializeField] private float driftSidewaysFriction = 15f;
 
     private float currentSpeed = 0f;
     public Texture2D SpeedDisplay;
@@ -38,7 +43,24 @@ public class CarController : MonoBehaviour
     private Vector3 FRpos;
     private Quaternion FRrot;
     private bool isBreaking = false;
+    private bool isDrifting = false;
+    private bool isPlayingSound = false;
+    //private Vector3 com;
 
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        /*com = rb.centerOfMass;
+        com.y = 0f;
+        rb.centerOfMass = com;*/
+        mainForwardFriction = RRWheel.forwardFriction.stiffness;
+        mainSidewaysFriction = RRWheel.sidewaysFriction.stiffness;
+        //Brake = gameObject.AddComponent(typeof(AudioSource));
+        //Brake.clip = BrakeSound;
+        Brake.loop = true;
+        Brake.volume = 0f;
+    }
 
     private void FixedUpdate()
     {
@@ -113,12 +135,17 @@ public class CarController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            //RLWheel.brakeTorque = slideBrakeTorque;
-            //RRWheel.brakeTorque = slideBrakeTorque;
-            SetFriction(driftForwardFriction, driftSidewaysFriction);
+            BrakeEffect(isDrifting = true);
+            RLWheel.brakeTorque = slideBrakeTorque;
+            RRWheel.brakeTorque = slideBrakeTorque;
+            if ((Mathf.Abs(rb.velocity.z) > 1) || (Mathf.Abs(rb.velocity.x) > 1))
+            {
+                SetFriction(driftForwardFriction, driftSidewaysFriction);
+            }
         }
         else
         {
+            BrakeEffect(isDrifting = false);
             RLWheel.brakeTorque = 0;
             RRWheel.brakeTorque = 0;
             SetFriction(mainForwardFriction, mainSidewaysFriction);
@@ -165,6 +192,29 @@ public class CarController : MonoBehaviour
         FR.transform.rotation = FRrot * Quaternion.Euler(0, 180, 0);
     }
 
+    private void BrakeEffect(bool play)
+    {
+        if (play)
+        {
+            if (isPlayingSound == false)
+            {
+                isPlayingSound = true;
+                Brake.volume = 1f;
+                Brake.Play();
+                lSmoke.Play();
+                rSmoke.Play();
+            }
+
+        }
+        else
+        {
+            isPlayingSound = false;
+            Brake.Stop();
+            lSmoke.Stop();
+            rSmoke.Stop();
+        }
+    }
+
     #endregion
 
     #region Sound
@@ -174,6 +224,6 @@ public class CarController : MonoBehaviour
         Engine.pitch= Mathf.Lerp(minPitch, maxPitch, Mathf.Abs(currentSpeed/MaxSpeed));
     }
     
-
+  
     #endregion
 }
