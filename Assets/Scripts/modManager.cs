@@ -15,9 +15,18 @@ public class modManager : MonoBehaviour
     //public Image activeMod2;
     //public Image activeMod3;
     private int currentMod = 0;
-    private int ownedMod1 = 10;
+    private int[] ownedMods;
+    private int owIndex = 0;
+    private int maxIndex = 0;
+    /*private int ownedMod1 = 10;
     private int ownedMod2 = 20;
-    private int ownedMod3 = 30;
+    private int ownedMod3 = 30;*/
+
+
+    private void Start()
+    {
+        ownedMods = new int[3];
+    }
 
     private void Update()
     {
@@ -29,7 +38,7 @@ public class modManager : MonoBehaviour
         }
         if (modCount > 1)
         {
-            Debug.Log("Entra Selector");
+            Debug.Log("Selector Activo");
             StartCoroutine(ModSelector());
         }
             
@@ -55,10 +64,44 @@ public class modManager : MonoBehaviour
 
     public IEnumerator ModSelector()
     {
-        if (Input.GetKeyDown(KeyCode.J))
+        Debug.Log("indice "+owIndex);
+        if (Input.GetKeyDown(KeyCode.L) && owIndex < maxIndex)
+        {
+            Debug.Log("indice +1");
+            modGameObjects[currentMod].gameObject.SetActive(false);
+            owIndex++;
+            currentMod = ownedMods[owIndex];
+            slotController();
+            yield return new WaitForSeconds(1);
+            modGameObjects[currentMod].gameObject.SetActive(true);
+        }
+        else if(Input.GetKeyDown(KeyCode.L) && owIndex == maxIndex)
         {
             modGameObjects[currentMod].gameObject.SetActive(false);
-            currentMod = ownedMod2;
+            Debug.Log("indice maxeado a 0");
+            owIndex=0;
+            currentMod = ownedMods[owIndex];
+            slotController();
+            yield return new WaitForSeconds(1);
+            modGameObjects[currentMod].gameObject.SetActive(true);
+        }
+
+        if (Input.GetKeyDown(KeyCode.J) && owIndex > 0)
+        {
+            Debug.Log("indice --");
+            modGameObjects[currentMod].gameObject.SetActive(false);
+            owIndex--;
+            currentMod = ownedMods[owIndex];
+            slotController();
+            yield return new WaitForSeconds(1);
+            modGameObjects[currentMod].gameObject.SetActive(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.J) & owIndex == 0)
+        {
+            Debug.Log("indice dropeado a maximo");
+            modGameObjects[currentMod].gameObject.SetActive(false);
+            owIndex=maxIndex;
+            currentMod = ownedMods[owIndex];
             slotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
@@ -90,28 +133,30 @@ public class modManager : MonoBehaviour
     {
         if (modCount == 0)
         {
-            ownedMod1 = Random.Range(0, modGameObjects.Length);
-            currentMod = ownedMod1;
+            ownedMods[modCount] = Random.Range(0, modGameObjects.Length);
+            currentMod = ownedMods[modCount];
+            Debug.Log("Asignado 1");
             slotController();
             //activeMod1.sprite = modSprites[ownedMod1]
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].SetActive(true);
-            Debug.Log(modGameObjects[currentMod].name);
         }
         else if (modCount == 1)
         {
-            ownedMod2 = Random.Range(0, modGameObjects.Length);
-            Debug.Log("Owned2 = "+ownedMod2);
+            ownedMods[modCount] = Random.Range(0, modGameObjects.Length);
+            Debug.Log("Asignados 2 ");
             //activeMod2.sprite = modSprites[ownedMod2]
             yield return new WaitForSeconds(1);
         }
         else if(modCount == 2)
         {
-            ownedMod3 = Random.Range(0, modGameObjects.Length);
-            Debug.Log("Owned3 = " + ownedMod3);
+            ownedMods[modCount] = Random.Range(0, modGameObjects.Length);
+            Debug.Log("Asignados 3 ");
             //activeMod3.sprite = modSprites[ownedMod3]
             yield return new WaitForSeconds(1);
         }
+        maxIndex = modCount;
+        Debug.Log("maxIndex = " + maxIndex);
         modCount++;
     }
 }
