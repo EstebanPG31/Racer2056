@@ -25,6 +25,12 @@ public class modManager : MonoBehaviour
         if (modCount > 0)
         {
             slotController();
+            
+        }
+        if (modCount > 1)
+        {
+            Debug.Log("Entra Selector");
+            StartCoroutine(ModSelector());
         }
             
     }
@@ -47,6 +53,18 @@ public class modManager : MonoBehaviour
         }
     }
 
+    public IEnumerator ModSelector()
+    {
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            modGameObjects[currentMod].gameObject.SetActive(false);
+            currentMod = ownedMod2;
+            slotController();
+            yield return new WaitForSeconds(1);
+            modGameObjects[currentMod].gameObject.SetActive(true);
+        }
+    }
+
     private IEnumerator OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Dron")
@@ -57,6 +75,10 @@ public class modManager : MonoBehaviour
         if (modCount < 3)
         {
             StartCoroutine(ModAsign());
+        }
+        else
+        {
+            Debug.Log("No se asigna nuevo mod");
         }
 
         yield return new WaitForSeconds(5);
@@ -79,12 +101,14 @@ public class modManager : MonoBehaviour
         else if (modCount == 1)
         {
             ownedMod2 = Random.Range(0, modGameObjects.Length);
+            Debug.Log("Owned2 = "+ownedMod2);
             //activeMod2.sprite = modSprites[ownedMod2]
             yield return new WaitForSeconds(1);
         }
         else if(modCount == 2)
         {
             ownedMod3 = Random.Range(0, modGameObjects.Length);
+            Debug.Log("Owned3 = " + ownedMod3);
             //activeMod3.sprite = modSprites[ownedMod3]
             yield return new WaitForSeconds(1);
         }
