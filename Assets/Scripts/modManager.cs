@@ -1,40 +1,34 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class modManager : MonoBehaviour
 {
     public Animator slotsAnimator;
     private int opener = 0;
 
-    private int modCount = 0;
+    public int modCount = 0;
     public GameObject[] modGameObjects;
     //public Sprite[] modSprites;   
     //public Image activeMod1;
     //public Image activeMod2;
     //public Image activeMod3;
     private int currentMod = 0;
-    private int[] ownedMods;
+    private int?[] ownedMods;
     private int owIndex = 0;
     private int maxIndex = 0;
-    /*private int ownedMod1 = 10;
-    private int ownedMod2 = 20;
-    private int ownedMod3 = 30;*/
 
 
     private void Start()
     {
-        ownedMods = new int[3];
+        ownedMods = new int?[3];
     }
 
     private void Update()
     {
         
-        if (modCount > 0)
+        if (modCount > 0 && Input.GetKeyDown(KeyCode.K))
         {
-            slotController();
-            
+            StartCoroutine(ModDrop());
         }
         if (modCount > 1)
         {
@@ -43,7 +37,7 @@ public class modManager : MonoBehaviour
         }
             
     }
-    public void slotController()
+    public void SlotController()
     {
         if (0 <= currentMod && currentMod <2)
         {
@@ -67,45 +61,117 @@ public class modManager : MonoBehaviour
         Debug.Log("indice "+owIndex);
         if (Input.GetKeyDown(KeyCode.L) && owIndex < maxIndex)
         {
-            Debug.Log("indice +1");
             modGameObjects[currentMod].gameObject.SetActive(false);
             owIndex++;
-            currentMod = ownedMods[owIndex];
-            slotController();
+            currentMod = (int)ownedMods[owIndex];
+            SlotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
         }
         else if(Input.GetKeyDown(KeyCode.L) && owIndex == maxIndex)
         {
             modGameObjects[currentMod].gameObject.SetActive(false);
-            Debug.Log("indice maxeado a 0");
             owIndex=0;
-            currentMod = ownedMods[owIndex];
-            slotController();
+            currentMod = (int)ownedMods[owIndex];
+            SlotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
         }
 
         if (Input.GetKeyDown(KeyCode.J) && owIndex > 0)
         {
-            Debug.Log("indice --");
             modGameObjects[currentMod].gameObject.SetActive(false);
             owIndex--;
-            currentMod = ownedMods[owIndex];
-            slotController();
+            currentMod = (int)ownedMods[owIndex];
+            SlotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
         }
         else if (Input.GetKeyDown(KeyCode.J) & owIndex == 0)
         {
-            Debug.Log("indice dropeado a maximo");
             modGameObjects[currentMod].gameObject.SetActive(false);
             owIndex=maxIndex;
-            currentMod = ownedMods[owIndex];
-            slotController();
+            currentMod = (int)ownedMods[owIndex];
+            SlotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
         }
+    }
+
+    public IEnumerator ModDrop()
+    {
+        if (modCount == 1)
+        {
+            modGameObjects[currentMod].gameObject.SetActive(false);
+            ownedMods[(modCount - 1)] = null;
+            opener = 0;
+            slotsAnimator.SetInteger("Slot", opener);
+        }
+        else if (modCount == 2) { 
+            if (owIndex == maxIndex)
+            {
+                modGameObjects[currentMod].gameObject.SetActive(false);
+                ownedMods[maxIndex] = null;
+                owIndex--;
+                maxIndex--;
+                currentMod = (int)ownedMods[owIndex];
+                SlotController();
+                yield return new WaitForSeconds(1);
+                modGameObjects[currentMod].gameObject.SetActive(true);
+            }
+            else if(owIndex == 0)
+            {
+                modGameObjects[currentMod].gameObject.SetActive(false);
+                currentMod = (int)ownedMods[owIndex+1];
+                maxIndex--;
+                SlotController();
+                ownedMods[owIndex+1] = null;
+                ownedMods[owIndex] = currentMod;
+                yield return new WaitForSeconds(1);
+                modGameObjects[currentMod].gameObject.SetActive(true);
+            }
+        }
+        else if (modCount == 3)
+        {
+            if (owIndex == maxIndex)
+            {
+                modGameObjects[currentMod].gameObject.SetActive(false);
+                ownedMods[maxIndex] = null;
+                owIndex--;
+                maxIndex--;
+                currentMod = (int)ownedMods[owIndex];
+                SlotController();
+                yield return new WaitForSeconds(1);
+                modGameObjects[currentMod].gameObject.SetActive(true);
+            }
+            else if (owIndex == 1)
+            {
+
+                modGameObjects[currentMod].gameObject.SetActive(false);
+                currentMod = (int)ownedMods[owIndex + 1];
+                SlotController();
+                maxIndex--;
+                ownedMods[owIndex + 1] = null;
+                ownedMods[owIndex] = currentMod;
+                yield return new WaitForSeconds(1);
+                modGameObjects[currentMod].gameObject.SetActive(true);
+            }
+            else if (owIndex == 0)
+            {
+                modGameObjects[currentMod].gameObject.SetActive(false);
+                currentMod = (int)ownedMods[owIndex + 1];
+                SlotController();
+                ownedMods[owIndex] = currentMod;
+                ownedMods[owIndex+1] = ownedMods[owIndex+2];
+                ownedMods[owIndex + 2] = null;
+                maxIndex--;
+                yield return new WaitForSeconds(1);
+                modGameObjects[currentMod].gameObject.SetActive(true);
+            }
+        }
+        print("owIndex = " + owIndex);
+        modCount--;
+        print("Mod dropeado, cuenta " + modCount);
     }
 
     private IEnumerator OnTriggerEnter(Collider other)
@@ -134,9 +200,9 @@ public class modManager : MonoBehaviour
         if (modCount == 0)
         {
             ownedMods[modCount] = Random.Range(0, modGameObjects.Length);
-            currentMod = ownedMods[modCount];
+            currentMod = (int)ownedMods[modCount];
             Debug.Log("Asignado 1");
-            slotController();
+            SlotController();
             //activeMod1.sprite = modSprites[ownedMod1]
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].SetActive(true);

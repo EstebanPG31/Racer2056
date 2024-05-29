@@ -18,7 +18,7 @@ public class CarController : MonoBehaviour
     [SerializeField] ParticleSystem rSmoke;
     [SerializeField] AudioSource Engine;
     [SerializeField] AudioSource Brake;
-    //[SerializeField] AudioClip BrakeSound;
+    [SerializeField] AudioClip BrakeSound;
     [SerializeField] Rigidbody rb;
 
     [Header("Values")]
@@ -57,7 +57,7 @@ public class CarController : MonoBehaviour
         mainForwardFriction = RRWheel.forwardFriction.stiffness;
         mainSidewaysFriction = RRWheel.sidewaysFriction.stiffness;
         //Brake = gameObject.AddComponent(typeof(AudioSource));
-        //Brake.clip = BrakeSound;
+        Brake.clip = BrakeSound;
         Brake.loop = true;
         Brake.volume = 0f;
     }
