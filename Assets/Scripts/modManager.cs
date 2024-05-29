@@ -21,7 +21,7 @@ public class modManager : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(opener.ToString());
+        
         if (modCount > 0)
         {
             slotController();
@@ -30,7 +30,21 @@ public class modManager : MonoBehaviour
     }
     public void slotController()
     {
-        //opener = modGameObjects[currentMod].GetComponent
+        if (0 <= currentMod && currentMod <2)
+        {
+            opener = 1;
+            slotsAnimator.SetInteger("Slot", opener);
+        }
+        else if (currentMod == 2)
+        {
+            opener = 2;
+            slotsAnimator.SetInteger("Slot", opener);
+        }
+        else
+        {
+            opener = 3;
+            slotsAnimator.SetInteger("Slot", opener);
+        }
     }
 
     private IEnumerator OnTriggerEnter(Collider other)
@@ -45,7 +59,7 @@ public class modManager : MonoBehaviour
             StartCoroutine(ModAsign());
         }
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(5);
         other.gameObject.GetComponent<Animator>().SetBool("Available", true);
         other.gameObject.GetComponent<BoxCollider>().enabled = true;
     }
@@ -56,9 +70,11 @@ public class modManager : MonoBehaviour
         {
             ownedMod1 = Random.Range(0, modGameObjects.Length);
             currentMod = ownedMod1;
+            slotController();
             //activeMod1.sprite = modSprites[ownedMod1]
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].SetActive(true);
+            Debug.Log(modGameObjects[currentMod].name);
         }
         else if (modCount == 1)
         {
