@@ -16,7 +16,7 @@ public class modManager : MonoBehaviour
     private int?[] ownedMods;
     private int owIndex = 0;
     private int maxIndex = 0;
-    public float boost;
+    public float boost = 2000f;
     private Rigidbody carRB;
 
     #region Unity functions
@@ -236,13 +236,6 @@ public class modManager : MonoBehaviour
             yield return new WaitForSeconds(5);
             other.gameObject.GetComponent<Animator>().SetBool("Available", true);
             other.gameObject.GetComponent<BoxCollider>().enabled = true;
-        }
-        else if (other.CompareTag("Turbopad"))
-        {
-            var force = transform.forward * boost;
-            print("Fuerza= " + force);
-            carRB.AddForce(force, ForceMode.Acceleration);
-            print("Turbopad detectado");
         }
     }
     #endregion

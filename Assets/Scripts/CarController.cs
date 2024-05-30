@@ -38,7 +38,6 @@ public class CarController : MonoBehaviour
     private float currentSpeed = 0f;
     public Texture2D SpeedDisplay;
     public Texture2D SpeedPointer;
-    Vector2 centro;
     private Vector3 FLpos;
     private Quaternion FLrot;
     private Vector3 FRpos;
@@ -46,7 +45,7 @@ public class CarController : MonoBehaviour
     private bool isBreaking = false;
     private bool isDrifting = false;
     private bool isPlayingSound = false;
-
+    public UIManager UIManager;
 
     private void Start()
     {
@@ -69,11 +68,15 @@ public class CarController : MonoBehaviour
     private void Update()
     {
         rb.AddForce(Vector3.down * downForce);
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            TogglePause();
+        }
         wheelRotation();
         wheelSteer();
     }
 
-    private void OnGUI()
+    /*private void OnGUI()
     {
         GUI.Box(new Rect(0,0,150,50), new GUIContent("Speed " + currentSpeed));
         GUI.Box(new Rect(1640, 700, 280, 280), SpeedDisplay);
@@ -86,13 +89,34 @@ public class CarController : MonoBehaviour
             GUIUtility.RotateAroundPivot( - 140, centro);
         }
         GUI.DrawTexture(new Rect(1640,700,280,280), SpeedPointer, ScaleMode.ScaleToFit,true,0);
+    }*/
+
+    void TogglePause()
+    {
+        if (Time.timeScale == 0f)
+        {
+            // El juego está pausado, resumirlo
+            Time.timeScale = 1f;
+            UIManager.ShowHUD();
+            // Reanudar el audio si estaba pausado
+            Engine.UnPause();
+            Brake.UnPause();
+        }
+        else
+        {
+            // Pausar el juego
+            Time.timeScale = 0f;
+            UIManager.ShowPause();
+            // Pausar el audio si está sonando
+            Engine.Pause();
+            Brake.Pause();
+        }
     }
 
 
+#region Movement
 
-    #region Movement
-
-    void Movement()
+void Movement()
     {
 
         FLWheel.steerAngle = 15 * Input.GetAxis("Horizontal");
