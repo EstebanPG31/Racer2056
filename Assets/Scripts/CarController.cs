@@ -22,17 +22,18 @@ public class CarController : MonoBehaviour
     [SerializeField] Rigidbody rb;
 
     [Header("Values")]
-    [SerializeField] private float MaxTorque = 220000;
+    [SerializeField] private float MaxTorque = 100000;
     [SerializeField] private float MaxSpeed = 2400;
-    [SerializeField] private float maxBackwardsSpeed = 300;
-    [SerializeField] private float normalBrakeTorque = 130000;
+    [SerializeField] private float maxBackwardsSpeed = 100;
+    [SerializeField] private float normalBrakeTorque = 100000;
     [SerializeField] private float slideBrakeTorque = 15000;
     [SerializeField] private float minPitch =0.4f;
     [SerializeField] private float maxPitch = 1.1f;
-    [SerializeField] private float mainForwardFriction = 15.0f;
-    [SerializeField] private float mainSidewaysFriction = 15.0f;
+    [SerializeField] private float mainForwardFriction = 10.0f;
+    [SerializeField] private float mainSidewaysFriction = 10.0f;
     [SerializeField] private float driftForwardFriction = 0.60f;
-    [SerializeField] private float driftSidewaysFriction = 15f;
+    [SerializeField] private float driftSidewaysFriction = 18f;
+    [SerializeField] private float downForce = 500f;
 
     private float currentSpeed = 0f;
     public Texture2D SpeedDisplay;
@@ -45,15 +46,11 @@ public class CarController : MonoBehaviour
     private bool isBreaking = false;
     private bool isDrifting = false;
     private bool isPlayingSound = false;
-    //private Vector3 com;
 
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        /*com = rb.centerOfMass;
-        com.y = 0f;
-        rb.centerOfMass = com;*/
         mainForwardFriction = RRWheel.forwardFriction.stiffness;
         mainSidewaysFriction = RRWheel.sidewaysFriction.stiffness;
         //Brake = gameObject.AddComponent(typeof(AudioSource));
@@ -71,6 +68,7 @@ public class CarController : MonoBehaviour
 
     private void Update()
     {
+        rb.AddForce(Vector3.down * downForce);
         wheelRotation();
         wheelSteer();
     }

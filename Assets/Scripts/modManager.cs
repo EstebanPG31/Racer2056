@@ -16,10 +16,14 @@ public class modManager : MonoBehaviour
     private int?[] ownedMods;
     private int owIndex = 0;
     private int maxIndex = 0;
+    public float boost;
+    private Rigidbody carRB;
 
+    #region Unity functions
 
     private void Start()
     {
+        carRB = GetComponent<Rigidbody>();
         ownedMods = new int?[3];
     }
 
@@ -37,6 +41,11 @@ public class modManager : MonoBehaviour
         }
             
     }
+
+    #endregion
+
+    #region Mods Interactions
+
     public void SlotController()
     {
         if (0 <= currentMod && currentMod <2)
@@ -174,27 +183,6 @@ public class modManager : MonoBehaviour
         print("Mod dropeado, cuenta " + modCount);
     }
 
-    private IEnumerator OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Dron")
-        {
-            other.gameObject.GetComponent<BoxCollider>().enabled = false;
-            other.gameObject.GetComponent<Animator>().SetBool("Available", false);
-        }
-        if (modCount < 3)
-        {
-            StartCoroutine(ModAsign());
-        }
-        else
-        {
-            Debug.Log("No se asigna nuevo mod");
-        }
-
-        yield return new WaitForSeconds(5);
-        other.gameObject.GetComponent<Animator>().SetBool("Available", true);
-        other.gameObject.GetComponent<BoxCollider>().enabled = true;
-    }
-
     public IEnumerator ModAsign()
     {
         if (modCount == 0)
@@ -225,4 +213,38 @@ public class modManager : MonoBehaviour
         Debug.Log("maxIndex = " + maxIndex);
         modCount++;
     }
+
+    #endregion
+
+    #region Colliders interactors
+
+    private IEnumerator OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Dron"))
+        {
+            other.gameObject.GetComponent<BoxCollider>().enabled = false;
+            other.gameObject.GetComponent<Animator>().SetBool("Available", false);
+            if (modCount < 3)
+            {
+                StartCoroutine(ModAsign());
+            }
+            else
+            {
+                Debug.Log("No se asigna nuevo mod");
+            }
+
+            yield return new WaitForSeconds(5);
+            other.gameObject.GetComponent<Animator>().SetBool("Available", true);
+            other.gameObject.GetComponent<BoxCollider>().enabled = true;
+        }
+        else if (other.CompareTag("Turbopad"))
+        {
+            var force = transform.forward * boost;
+            print("Fuerza= " + force);
+            carRB.AddForce(force, ForceMode.Acceleration);
+            print("Turbopad detectado");
+        }
+    }
+    #endregion
 }
+
