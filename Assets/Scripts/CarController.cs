@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class CarController : MonoBehaviour
 {
@@ -22,12 +23,12 @@ public class CarController : MonoBehaviour
     [SerializeField] AudioSource Engine;
     [SerializeField] AudioSource Brake;
     [SerializeField] AudioClip BrakeSound;
-    [SerializeField] Image needle;
+    [SerializeField] UnityEngine.UI.Image needle;
     [SerializeField] Rigidbody rb;
 
     [Header("Values")]
     [SerializeField] private float MaxTorque = 120000;
-    [SerializeField] private float MaxSpeed = 2000;
+    [SerializeField] private float MaxSpeed = 1500;
     [SerializeField] private float maxBackwardsSpeed = 100;
     [SerializeField] private float normalBrakeTorque = 100000;
     [SerializeField] private float slideBrakeTorque = 15000;
@@ -49,26 +50,39 @@ public class CarController : MonoBehaviour
     private bool isDrifting = false;
     private bool isPlayingSound = false;
     public UIManager UIManager;
-    private float speedRatio;
+    private float effectsSpeedRatio;
+    private int mods;
+    private modManager modManager;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        modManager = FindObjectOfType<modManager>();
         mainForwardFriction = RRWheel.forwardFriction.stiffness;
         mainSidewaysFriction = RRWheel.sidewaysFriction.stiffness;
         Brake.clip = BrakeSound;
-        Brake.loop = true;
-        Brake.volume = 0f;
     }
 
     private void FixedUpdate()
     {
         rb.AddForce(Vector3.down * downForce);
+        //Modifica la velocidad del auto en funcion de cuantas armas tiene
+        mods = modManager.modCount;
+        if (mods > 0)
+        {
+            MaxSpeed = 1500 - 180 * mods;
+        }
+        else
+        {
+            MaxSpeed = 1500;
+        }
+        
+        print("Max speed = "+ MaxSpeed);
         Speedometer(currentSpeed);
         Movement();
         Drifting();
         GearSound();
-        speedRatio = currentSpeed / MaxSpeed;
+        effectsSpeedRatio = (rb.velocity.magnitude *8) / MaxSpeed;
     }
 
     private void Update()
@@ -81,7 +95,12 @@ public class CarController : MonoBehaviour
         wheelSteer();
     }
 
-   
+    private void OnGUI()
+    {
+        GUI.Box(new Rect(10, 200, 150, 50), new GUIContent("Speed = " + currentSpeed + " mods = " + mods));
+    }
+
+
 
     void TogglePause()
     {
@@ -108,7 +127,7 @@ public class CarController : MonoBehaviour
 
 #region Movement
 
-void Movement()
+    void Movement()
     {
 
         FLWheel.steerAngle = 15 * Input.GetAxis("Horizontal");
@@ -142,8 +161,7 @@ void Movement()
             FLWheel.brakeTorque = normalBrakeTorque;
             FRWheel.brakeTorque = normalBrakeTorque;
         }
-        //currentSpeed = Mathf.Round((Mathf.PI * 2 * FLWheel.radius) * FLWheel.rpm * 15 / 100);
-        currentSpeed = rb.velocity.magnitude*8;
+        currentSpeed = Mathf.Round((Mathf.PI * 2 * FLWheel.radius) * FLWheel.rpm * 15 / 100);
     }
 
     void Drifting()
@@ -221,10 +239,9 @@ void Movement()
                 if (isPlayingSound == false)
                 {
                     isPlayingSound = true;
-                    Brake.volume = 1f;
                     Brake.Play();
                 }
-                rb.AddTorque(20*Input.GetAxis("Horizontal") * drift.Evaluate(speedRatio) * Mathf.Sign(speedRatio) * transform.up, ForceMode.Acceleration);
+                rb.AddTorque(20*Input.GetAxis("Horizontal") * drift.Evaluate(effectsSpeedRatio) * Mathf.Sign(effectsSpeedRatio) * transform.up, ForceMode.Acceleration);
             }
         }
         else
@@ -240,18 +257,23 @@ void Movement()
 
     public void Speedometer(float speed)
     {
-        if (speed >=0)
+        float angle;
+        if (speed >0)
         {
-            
-            float angle = (speedRatio * 280) - 140;
-
-            needle.rectTransform.rotation = Quaternion.Euler(0f, 0f, -angle); 
+            angle = (effectsSpeedRatio * 280) - 140;
+            needle.rectTransform.rotation = Quaternion.Euler(0f, 0f, -angle);
         }
+        else if (speed <= 0)
+        {
+            angle = -140;
+            needle.rectTransform.rotation = Quaternion.Euler(0f, 0f, -angle);
+        }
+        
     }
     
     private void GearSound()
     {
-        Engine.pitch= Mathf.Lerp(minPitch, maxPitch, Mathf.Abs(speedRatio));
+        Engine.pitch= Mathf.Lerp(minPitch, maxPitch, Mathf.Abs(effectsSpeedRatio));
     }
     #endregion
 }

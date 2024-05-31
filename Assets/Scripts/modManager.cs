@@ -16,14 +16,12 @@ public class modManager : MonoBehaviour
     private int?[] ownedMods;
     private int owIndex = 0;
     private int maxIndex = 0;
-    public float boost = 2000f;
-    private Rigidbody carRB;
 
     #region Unity functions
 
     private void Start()
     {
-        carRB = GetComponent<Rigidbody>();
+        
         ownedMods = new int?[3];
     }
 
@@ -41,10 +39,6 @@ public class modManager : MonoBehaviour
         }
             
     }
-    /*private void OnGUI()
-    {
-        GUI.Box(new Rect(10, 200, 150, 50), new GUIContent("modCount = " + modCount));
-    }*/
 
     #endregion
 
