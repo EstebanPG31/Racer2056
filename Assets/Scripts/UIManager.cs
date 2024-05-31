@@ -75,10 +75,8 @@ public class UIManager : MonoBehaviour
         startTime = Time.time;
     }
 
-    /*public void ExitGame()
+    public void ExitGame()
     {
-       Time.timeScale = 1.0f;
-        SceneManager.LoadScene(0);
-        //Application.Quit();
-    }*/
+        Application.Quit();
+    }
 }
