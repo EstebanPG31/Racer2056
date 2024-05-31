@@ -34,7 +34,7 @@ public class modManager : MonoBehaviour
         }
         if (modCount > 1)
         {
-            Debug.Log("Selector Activo");
+            //Debug.Log("Selector Activo");
             StartCoroutine(ModSelector());
         }
             
@@ -65,7 +65,7 @@ public class modManager : MonoBehaviour
 
     public IEnumerator ModSelector()
     {
-        Debug.Log("indice "+owIndex);
+        //Debug.Log("indice "+owIndex);
         if (Input.GetKeyDown(KeyCode.L) && owIndex < maxIndex)
         {
             modGameObjects[currentMod].gameObject.SetActive(false);
@@ -176,9 +176,9 @@ public class modManager : MonoBehaviour
                 modGameObjects[currentMod].gameObject.SetActive(true);
             }
         }
-        print("owIndex = " + owIndex);
+        //print("owIndex = " + owIndex);
         modCount--;
-        print("Mod dropeado, cuenta " + modCount);
+        //print("Mod dropeado, cuenta " + modCount);
     }
 
     public IEnumerator ModAsign()

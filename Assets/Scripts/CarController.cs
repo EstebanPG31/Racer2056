@@ -95,10 +95,6 @@ public class CarController : MonoBehaviour
         wheelSteer();
     }
 
-    private void OnGUI()
-    {
-        GUI.Box(new Rect(10, 200, 150, 50), new GUIContent("Speed = " + currentSpeed + " mods = " + mods));
-    }
 
 
 
