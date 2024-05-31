@@ -15,8 +15,9 @@ public class modBumpers : MonoBehaviour
         if (rb != null)
         {
             rb.AddForce(transform.right * push, ForceMode.Acceleration);
+            hitCount();
         }
-        hitCount();
+        
     }
 
     private void hitCount()

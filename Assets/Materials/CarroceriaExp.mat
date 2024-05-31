@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: CarroceriaExp
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_Parent: {fileID: 2987340110848465150, guid: d8e5a31eea771c149bb89f749f0e1b11, type: 3}
+  m_Parent: {fileID: 2100000, guid: 782aa31e228d8424db7053056046a595, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
