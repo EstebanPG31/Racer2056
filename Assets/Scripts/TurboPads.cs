@@ -12,9 +12,7 @@ public class TurboPads : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             var force = other.transform.forward * boost;
-            //print("Fuerza= "+force);
             other.GetComponent<Rigidbody>().AddForce(force, ForceMode.Acceleration);
-            //print("Turbopad detectado");
         }
     }
 }

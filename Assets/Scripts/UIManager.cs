@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -36,9 +37,10 @@ public class UIManager : MonoBehaviour
         //Time.timeScale = 0.0f;
     }
 
-    public void ExitGame()
+    /*public void ExitGame()
     {
        Time.timeScale = 1.0f;
-        Application.Quit();
-    }
+        SceneManager.LoadScene(0);
+        //Application.Quit();
+    }*/
 }

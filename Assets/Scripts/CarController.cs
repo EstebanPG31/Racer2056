@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CarController : MonoBehaviour
 {
@@ -16,9 +17,12 @@ public class CarController : MonoBehaviour
     [SerializeField] Transform RR;
     [SerializeField] ParticleSystem lSmoke;
     [SerializeField] ParticleSystem rSmoke;
+    [SerializeField] TrailRenderer lskid;
+    [SerializeField] TrailRenderer rskid;
     [SerializeField] AudioSource Engine;
     [SerializeField] AudioSource Brake;
     [SerializeField] AudioClip BrakeSound;
+    [SerializeField] Image needle;
     [SerializeField] Rigidbody rb;
 
     [Header("Values")]
@@ -36,8 +40,6 @@ public class CarController : MonoBehaviour
     [SerializeField] private float downForce = 500f;
 
     private float currentSpeed = 0f;
-    public Texture2D SpeedDisplay;
-    public Texture2D SpeedPointer;
     private Vector3 FLpos;
     private Quaternion FLrot;
     private Vector3 FRpos;
@@ -60,6 +62,8 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        rb.AddForce(Vector3.down * downForce);
+        Speedometer(currentSpeed);
         Movement();
         Drifting();
         GearSound();
@@ -67,7 +71,6 @@ public class CarController : MonoBehaviour
 
     private void Update()
     {
-        rb.AddForce(Vector3.down * downForce);
         if (Input.GetKeyDown(KeyCode.P))
         {
             TogglePause();
@@ -76,20 +79,7 @@ public class CarController : MonoBehaviour
         wheelSteer();
     }
 
-    /*private void OnGUI()
-    {
-        GUI.Box(new Rect(0,0,150,50), new GUIContent("Speed " + currentSpeed));
-        GUI.Box(new Rect(1640, 700, 280, 280), SpeedDisplay);
-        centro = new Vector2(1780, 840);
-        if (currentSpeed >= 0)
-        {
-            GUIUtility.RotateAroundPivot((currentSpeed / 10) - 140, centro); 
-        }
-        else {
-            GUIUtility.RotateAroundPivot( - 140, centro);
-        }
-        GUI.DrawTexture(new Rect(1640,700,280,280), SpeedPointer, ScaleMode.ScaleToFit,true,0);
-    }*/
+   
 
     void TogglePause()
     {
@@ -150,7 +140,7 @@ void Movement()
             FLWheel.brakeTorque = normalBrakeTorque;
             FRWheel.brakeTorque = normalBrakeTorque;
         }
-        currentSpeed = Mathf.Round((Mathf.PI * 2 * FLWheel.radius) * FLWheel.rpm * 60 / 1000);
+        currentSpeed = Mathf.Round((Mathf.PI * 2 * FLWheel.radius) * FLWheel.rpm * 15 / 100);
     }
 
     void Drifting()
@@ -194,7 +184,7 @@ void Movement()
     #endregion
 
 
-    #region Visuals
+    #region Visuals and Sound
 
     void wheelRotation()
     {
@@ -218,15 +208,20 @@ void Movement()
     {
         if (play)
         {
-            if (isPlayingSound == false)
+             WheelHit hit;
+            if (RLWheel.GetGroundHit(out hit))
             {
-                isPlayingSound = true;
-                Brake.volume = 1f;
-                Brake.Play();
-                lSmoke.Play();
                 rSmoke.Play();
+                lSmoke.Play();
+                lskid.emitting = true;
+                rskid.emitting = true;
+                if (isPlayingSound == false)
+                {
+                    isPlayingSound = true;
+                    Brake.volume = 1f;
+                    Brake.Play();
+                }
             }
-
         }
         else
         {
@@ -234,18 +229,25 @@ void Movement()
             Brake.Stop();
             lSmoke.Stop();
             rSmoke.Stop();
+            lskid.emitting = false;
+            rskid.emitting= false;
         }
     }
 
-    #endregion
+    public void Speedometer(float speed)
+    {
+        if (speed >=0)
+        {
+            float speedRatio = speed / MaxSpeed;
+            float angle = (speedRatio * 280) - 140;
 
-    #region Sound
-
+            needle.rectTransform.rotation = Quaternion.Euler(0f, 0f, -angle); 
+        }
+    }
+    
     private void GearSound()
     {
         Engine.pitch= Mathf.Lerp(minPitch, maxPitch, Mathf.Abs(currentSpeed/MaxSpeed));
     }
-    
-  
     #endregion
 }
