@@ -26,8 +26,8 @@ public class CarController : MonoBehaviour
     [SerializeField] Rigidbody rb;
 
     [Header("Values")]
-    [SerializeField] private float MaxTorque = 100000;
-    [SerializeField] private float MaxSpeed = 2400;
+    [SerializeField] private float MaxTorque = 120000;
+    [SerializeField] private float MaxSpeed = 2000;
     [SerializeField] private float maxBackwardsSpeed = 100;
     [SerializeField] private float normalBrakeTorque = 100000;
     [SerializeField] private float slideBrakeTorque = 15000;
@@ -37,7 +37,8 @@ public class CarController : MonoBehaviour
     [SerializeField] private float mainSidewaysFriction = 10.0f;
     [SerializeField] private float driftForwardFriction = 0.60f;
     [SerializeField] private float driftSidewaysFriction = 18f;
-    [SerializeField] private float downForce = 500f;
+    [SerializeField] private float downForce = 30000f;
+    [SerializeField] private AnimationCurve drift;
 
     private float currentSpeed = 0f;
     private Vector3 FLpos;
@@ -48,13 +49,13 @@ public class CarController : MonoBehaviour
     private bool isDrifting = false;
     private bool isPlayingSound = false;
     public UIManager UIManager;
+    private float speedRatio;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         mainForwardFriction = RRWheel.forwardFriction.stiffness;
         mainSidewaysFriction = RRWheel.sidewaysFriction.stiffness;
-        //Brake = gameObject.AddComponent(typeof(AudioSource));
         Brake.clip = BrakeSound;
         Brake.loop = true;
         Brake.volume = 0f;
@@ -67,6 +68,7 @@ public class CarController : MonoBehaviour
         Movement();
         Drifting();
         GearSound();
+        speedRatio = currentSpeed / MaxSpeed;
     }
 
     private void Update()
@@ -140,7 +142,8 @@ void Movement()
             FLWheel.brakeTorque = normalBrakeTorque;
             FRWheel.brakeTorque = normalBrakeTorque;
         }
-        currentSpeed = Mathf.Round((Mathf.PI * 2 * FLWheel.radius) * FLWheel.rpm * 15 / 100);
+        //currentSpeed = Mathf.Round((Mathf.PI * 2 * FLWheel.radius) * FLWheel.rpm * 15 / 100);
+        currentSpeed = rb.velocity.magnitude*8;
     }
 
     void Drifting()
@@ -221,6 +224,7 @@ void Movement()
                     Brake.volume = 1f;
                     Brake.Play();
                 }
+                rb.AddTorque(20*Input.GetAxis("Horizontal") * drift.Evaluate(speedRatio) * Mathf.Sign(speedRatio) * transform.up, ForceMode.Acceleration);
             }
         }
         else
@@ -238,7 +242,7 @@ void Movement()
     {
         if (speed >=0)
         {
-            float speedRatio = speed / MaxSpeed;
+            
             float angle = (speedRatio * 280) - 140;
 
             needle.rectTransform.rotation = Quaternion.Euler(0f, 0f, -angle); 
@@ -247,7 +251,7 @@ void Movement()
     
     private void GearSound()
     {
-        Engine.pitch= Mathf.Lerp(minPitch, maxPitch, Mathf.Abs(currentSpeed/MaxSpeed));
+        Engine.pitch= Mathf.Lerp(minPitch, maxPitch, Mathf.Abs(speedRatio));
     }
     #endregion
 }
