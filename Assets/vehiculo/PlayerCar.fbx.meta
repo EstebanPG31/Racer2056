@@ -3,7 +3,27 @@ guid: d8e5a31eea771c149bb89f749f0e1b11
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Carroceria
+    second: {fileID: 2100000, guid: 782aa31e228d8424db7053056046a595, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PlacasMods
+    second: {fileID: 5111471542915892761, guid: c4c89fdc3cfbb704f9df5802a75e0ab4, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Relleno
+    second: {fileID: 2100000, guid: 290bc62f3c5c2634e81e183ad96ef3d1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ventanas
+    second: {fileID: 2100000, guid: 026bca94b8270f043a0beaf94ba63b97, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
