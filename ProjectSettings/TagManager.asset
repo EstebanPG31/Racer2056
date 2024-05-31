@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Dron
   - Turbopad
+  - Destruible
   layers:
   - Default
   - TransparentFX

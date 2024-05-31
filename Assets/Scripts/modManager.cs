@@ -13,16 +13,16 @@ public class modManager : MonoBehaviour
     //public Image activeMod2;
     //public Image activeMod3;
     private int currentMod = 0;
-    private int?[] ownedMods;
-    private int owIndex = 0;
-    private int maxIndex = 0;
+    private int[] ownedMods;
+    [Range(0, 2)] private int owIndex = 0;
+    [Range(0, 2)] private int maxIndex = 0;
 
     #region Unity functions
 
     private void Start()
     {
         
-        ownedMods = new int?[3];
+        ownedMods = new int[3];
     }
 
     private void Update()
@@ -70,7 +70,7 @@ public class modManager : MonoBehaviour
         {
             modGameObjects[currentMod].gameObject.SetActive(false);
             owIndex++;
-            currentMod = (int)ownedMods[owIndex];
+            currentMod = ownedMods[owIndex];
             SlotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
@@ -79,7 +79,7 @@ public class modManager : MonoBehaviour
         {
             modGameObjects[currentMod].gameObject.SetActive(false);
             owIndex=0;
-            currentMod = (int)ownedMods[owIndex];
+            currentMod = ownedMods[owIndex];
             SlotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
@@ -89,7 +89,7 @@ public class modManager : MonoBehaviour
         {
             modGameObjects[currentMod].gameObject.SetActive(false);
             owIndex--;
-            currentMod = (int)ownedMods[owIndex];
+            currentMod = ownedMods[owIndex];
             SlotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
@@ -98,7 +98,7 @@ public class modManager : MonoBehaviour
         {
             modGameObjects[currentMod].gameObject.SetActive(false);
             owIndex=maxIndex;
-            currentMod = (int)ownedMods[owIndex];
+            currentMod = ownedMods[owIndex];
             SlotController();
             yield return new WaitForSeconds(1);
             modGameObjects[currentMod].gameObject.SetActive(true);
@@ -110,7 +110,7 @@ public class modManager : MonoBehaviour
         if (modCount == 1)
         {
             modGameObjects[currentMod].gameObject.SetActive(false);
-            ownedMods[(modCount - 1)] = null;
+            ownedMods[(modCount - 1)] = 0;
             opener = 0;
             slotsAnimator.SetInteger("Slot", opener);
         }
@@ -118,10 +118,10 @@ public class modManager : MonoBehaviour
             if (owIndex == maxIndex)
             {
                 modGameObjects[currentMod].gameObject.SetActive(false);
-                ownedMods[maxIndex] = null;
+                ownedMods[maxIndex] = 0;
                 owIndex--;
                 maxIndex--;
-                currentMod = (int)ownedMods[owIndex];
+                currentMod = ownedMods[owIndex];
                 SlotController();
                 yield return new WaitForSeconds(1);
                 modGameObjects[currentMod].gameObject.SetActive(true);
@@ -129,10 +129,10 @@ public class modManager : MonoBehaviour
             else if(owIndex == 0)
             {
                 modGameObjects[currentMod].gameObject.SetActive(false);
-                currentMod = (int)ownedMods[owIndex+1];
+                currentMod = ownedMods[owIndex +1];
                 maxIndex--;
                 SlotController();
-                ownedMods[owIndex+1] = null;
+                //ownedMods[owIndex+1] = 0;
                 ownedMods[owIndex] = currentMod;
                 yield return new WaitForSeconds(1);
                 modGameObjects[currentMod].gameObject.SetActive(true);
@@ -143,10 +143,10 @@ public class modManager : MonoBehaviour
             if (owIndex == maxIndex)
             {
                 modGameObjects[currentMod].gameObject.SetActive(false);
-                ownedMods[maxIndex] = null;
+                ownedMods[maxIndex] = 0;
                 owIndex--;
                 maxIndex--;
-                currentMod = (int)ownedMods[owIndex];
+                currentMod = ownedMods[owIndex];
                 SlotController();
                 yield return new WaitForSeconds(1);
                 modGameObjects[currentMod].gameObject.SetActive(true);
@@ -155,10 +155,10 @@ public class modManager : MonoBehaviour
             {
 
                 modGameObjects[currentMod].gameObject.SetActive(false);
-                currentMod = (int)ownedMods[owIndex + 1];
+                currentMod = ownedMods[owIndex + 1];
                 SlotController();
                 maxIndex--;
-                ownedMods[owIndex + 1] = null;
+                //ownedMods[owIndex + 1] = 0;
                 ownedMods[owIndex] = currentMod;
                 yield return new WaitForSeconds(1);
                 modGameObjects[currentMod].gameObject.SetActive(true);
@@ -166,11 +166,11 @@ public class modManager : MonoBehaviour
             else if (owIndex == 0)
             {
                 modGameObjects[currentMod].gameObject.SetActive(false);
-                currentMod = (int)ownedMods[owIndex + 1];
+                currentMod = ownedMods[owIndex + 1];
                 SlotController();
                 ownedMods[owIndex] = currentMod;
                 ownedMods[owIndex+1] = ownedMods[owIndex+2];
-                ownedMods[owIndex + 2] = null;
+                //ownedMods[owIndex + 2] = 0;
                 maxIndex--;
                 yield return new WaitForSeconds(1);
                 modGameObjects[currentMod].gameObject.SetActive(true);
@@ -186,7 +186,7 @@ public class modManager : MonoBehaviour
         if (modCount == 0)
         {
             ownedMods[modCount] = Random.Range(0, modGameObjects.Length);
-            currentMod = (int)ownedMods[modCount];
+            currentMod = ownedMods[modCount];
             Debug.Log("Asignado 1");
             SlotController();
             //activeMod1.sprite = modSprites[ownedMod1]
@@ -214,7 +214,8 @@ public class modManager : MonoBehaviour
 
     #endregion
 
-    #region Colliders interactors
+
+    #region Dron Collider Interactor
 
     private IEnumerator OnTriggerEnter(Collider other)
     {
